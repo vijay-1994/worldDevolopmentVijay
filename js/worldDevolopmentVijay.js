@@ -1,13 +1,16 @@
+var log4j=require('log4js');
+var logger=log4j.getLogger();
 const fs = require('fs');
 let n1 = function convert(startYear) {
   let lineReader = require('readline').createInterface({
     input: fs.createReadStream('../inputdata/Indicators.csv')
   });
   if (isNaN(startYear)) {
+  	logger.error('not a number');
     throw new Error('Not a number');
     }
   let array = [];
-  // storing the required data into an array format
+  //storing rural and urban values in an array
   lineReader.on('line', function(line) {
     let linearray = line.split(',');
     if (linearray[1] === 'IND') {
@@ -26,7 +29,7 @@ let n1 = function convert(startYear) {
       }
     }
   });
-  //merging hetrogenous data under one sigle homogenous array
+  //merging those values into a single array
   let secarray = [];
   let jsonobj;
   lineReader.on('close', function() {
@@ -36,9 +39,8 @@ let n1 = function convert(startYear) {
         secarray.push(array[i]);
       }
     }
-    //converting into json object
+    //converting to json object
     jsonobj = JSON.stringify(secarray);
-    //storing json object into json file
     fs.writeFile('../outputdata/worldDevolopmentVijay.json', jsonobj);
   });
   return 'JSON written successfully';
